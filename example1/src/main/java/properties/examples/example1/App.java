@@ -19,7 +19,8 @@ public class App
     //	try
    // 	{
     		System.out.println( "Hello World!" );
-    	    Configuration config = configs.properties(new File("resources\\test1.properties"));
+    		System.out.println( System.getProperties().get("settings.properties") );
+    	    Configuration config = configs.properties(new File("src\\resources\\test1.properties"));
     	    // access configuration properties
     	    System.out.println(config.getProperty("prop1.example").toString());
     	    System.out.println(config.getProperty("testfile2.property2"));
