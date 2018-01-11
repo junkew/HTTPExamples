@@ -20,8 +20,12 @@ public class App
    // 	{
     		System.out.println( "Hello World!" );
     		System.out.println( System.getProperties().get("settings.properties") );
-    	    Configuration config = configs.properties(new File("src\\resources\\test1.properties"));
+//  		Configuration config = configs.properties(new File("src\\resources\\test1.properties"));
+    		File f = new File(System.getProperties().getProperty("settings.properties"));
+    		Configuration config = configs.properties(f);
     	    // access configuration properties
+    		System.out.println(f.getAbsolutePath() + f.getPath());
+
     	    System.out.println(config.getProperty("prop1.example").toString());
     	    System.out.println(config.getProperty("testfile2.property2"));
     	    System.out.println(config.getString("testfile2.property2"));
