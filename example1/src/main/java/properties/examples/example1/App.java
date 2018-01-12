@@ -4,9 +4,14 @@ import java.io.File;
 import java.util.List;
 import java.util.Properties;
 
+
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.ConfigurationConverter;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
 /**
@@ -23,15 +28,31 @@ public class App
 {
     public static void main( String[] args ) throws ConfigurationException
     {
-    	Configurations configs = new Configurations();
+    	FileBasedConfigurationBuilder<PropertiesConfiguration> builder =
+    		    new FileBasedConfigurationBuilder<PropertiesConfiguration>(PropertiesConfiguration.class)
+    		    .configure(new Parameters().properties()
+    		        .setFileName("test1.properties")
+    		        .setThrowExceptionOnMissing(true)
+    		        .setListDelimiterHandler(new DefaultListDelimiterHandler(';'))
+    		        .setIncludesAllowed(true));
+  //  	System.getProperties().get("settings.properties") 
+    	System.out.println( "Hello World!" );
+    //	@supresswarning;
+    	PropertiesConfiguration config = builder.getConfiguration();
+    	
+    //	Parameters params = new Parameters();
+    	
+    //	Configurations configs = new Configurations();
+    	
     //	try
    // 	{
     		System.out.println( "Hello World!" );
     		System.out.println("Loading from given property file: " + System.getProperties().get("settings.properties") );
 //  		Configuration config = configs.properties(new File("src\\resources\\test1.properties"));
     		File f = new File(System.getProperties().getProperty("settings.properties"));
-    		Configuration config = configs.properties(f);
-    	    // access configuration properties
+    	//	Configuration config = configs.properties(f);
+    	
+    		// access configuration properties
     		System.out.println("Path information within java: " + f.getAbsolutePath() + ";" + f.getPath());
 
     	    System.out.println("Step 1: A filename containing property with 2nd file: " + config.getProperty("prop1.example").toString());
@@ -50,6 +71,7 @@ public class App
    // 	{
     	    // Something went wrong
    // 	}
+    	 
     	   Properties props=ConfigurationConverter.getProperties(config);
     	   
 //    	   System.out.println(props.getProperty("testfile2.property2"));
