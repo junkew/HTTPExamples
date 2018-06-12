@@ -1,0 +1,128 @@
+<html><head>
+<meta http-equiv="X-UA-Compatible" content="IE=8" />
+<title>Test snapshots</title>
+<hta:application id="oHTAInfo"
+  applicationname="Test snapshots"
+  version="1.0"
+  border="thin"
+  borderstyle="raised"
+  caption="yes"
+  contextmenu="yes"
+  innerborder="no"
+  maximizebutton="no"
+  minimizebutton="no"
+  selection="yes"
+  scroll="yes"
+  scrollflat="yes"
+  showintaskbar="no"
+  SysMenu="no"
+  SINGLEINSTANCE="yes"
+>
+
+<style type="text/css">
+body {
+  font: 13pt arial;
+  color: white; 
+  filter: progid:DXImageTransform.Microsoft.Gradient (GradientType=0, StartColorStr='#000000', EndColorStr='#0000FF')
+}
+p {
+  margin: 0 0 0 0;
+}
+</style>
+</head>
+
+<SCRIPT LANGUAGE="VBScript">
+  Option Explicit
+  dim strFullName, strPath, strFileName
+  dim aLines
+  Dim oFS, oWS  'Filesystem and wscript object
+  Sub Window_onLoad
+	dim iPos
+	
+	Set oFS = CreateObject("Scripting.FileSystemObject")
+	Set oWS = CreateObject("WScript.Shell")
+
+	'Determine the script and folder information to dynamically load things
+	strFullName = replace(oHTAInfo.commandLine,chr(34),"")
+	iPos=instrRev(strFullName,"\")
+	strPath=left(strFullName, iPos)
+	strFileName=mid(strFullName,iPos +1)
+	
+	getFilesSorted()
+	readPNGFiles()
+	genImgLinks()
+	'    Alert "onLoad fired" & strPath
+  End Sub
+  
+  Sub Window_onUnload
+  ' Alert "onUnload fired"
+  End Sub
+  
+  sub getFilesSorted()
+	Dim strCmd
+	strCmd="%comspec% /c dir *.png /A:-D /B /O:D /T:C > " & strPath  & "sfile.inf"
+'	alert strCmd
+	oWS.Exec(strCmd)
+	'wait 2 seconds
+	'oWS.Sleep(2000)
+  end sub
+  
+  sub readPNGFiles()
+	dim strTemp, iFile
+	
+	strTemp=strPath  & "sfile.inf"
+    
+	if ofs.FileExists(strTemp) Then
+	    set iFile=ofs.OpenTextFile(strTemp)
+        if Not iFile.AtEndofStream Then
+			alines = iFile.ReadAll
+			iFile.close
+		End if
+		ofs.DeleteFile strTemp
+		alines = Split(aLines, chr(13)&chr(10))
+	Else
+		aLines = Array(nRes, "")
+	End if
+  end sub
+  
+  sub genImgLinks()
+	dim strHtml, strBaseHtml
+	dim i
+	
+	strBaseHtml="<li><a href=" & chr(34) & "#" & chr(34) 
+	strBaseHtml=strBaseHtml & " onMouseOver=" & chr(34) & "setImg('@imgFile@')" & chr(34) & ">@imgFile@</a></li>"
+	for i=0 to ubound(alines)-1
+		strHtml=strHtml & replace(strBaseHtml,"@imgFile@", alines(i))
+	next
+	'alert(strHtml)
+  
+		document.getelementbyid("ImageArea").InnerHTML = strHTML
+  end sub
+  
+  sub setImg(imgid)
+	document.getelementbyid("myimage").src = imgid 
+  end sub
+ 
+ Sub ExitProgram
+    window.close()
+  End Sub
+  
+</SCRIPT>
+
+<body id="mainbody">
+<input id=runbutton type="button" value="X" onClick="ExitProgram" style="float: right; margin-right: 10px;">
+<center><h1>Testing snapshots</h1></center>
+<h3>Quick overview hover with your mouse over the images</h3>
+<p id="textarea"></p>
+
+<!-- Here we put our li dynamically -->
+<span id="ImageArea"></span>
+
+<BR>
+<BR>
+<img id="myimage" src="snap1.png">
+<BR>
+<BR>
+</body>
+
+</html>
